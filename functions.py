@@ -40,3 +40,28 @@ def is_number(string: str) -> bool:
 
 f = '123 321'
 print(is_number(f))
+
+
+def unique(lst: list[str | int | float]) -> list[str | int | float]:
+    if not isinstance(lst, list):  raise TypeError("Ожидался список")
+
+    unique_lst = []
+    unique_elements_find = False
+    while not unique_elements_find:
+        for element in lst:
+            if element not in unique_lst:
+                unique_lst.append(element)
+
+        is_duplicate_found = False
+        for i in range(len(unique_lst) - 1):
+            if unique_lst[i] == unique_lst[i + 1]:
+                is_duplicate_found = True
+                break
+
+        if not is_duplicate_found:
+            unique_elements_find = True
+
+    return unique_lst
+
+f = [4.5, 2, 3, 3, '2', 'w', 'w', 'w']
+print(unique(f))
