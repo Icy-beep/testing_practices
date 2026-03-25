@@ -10,7 +10,7 @@ def calculate_sum(n: float) -> float:
     return n * (n + 1) / 2
 
 
-f = calculate_sum(10**10)
+f = calculate_sum(10)
 print(f)
 
 def count_words(line: str) -> int:
@@ -26,5 +26,5 @@ def count_words(line: str) -> int:
     return len(clean_words)
 
 
-d = count_words('hello world')
+d = count_words('hello world, im a human and i destroy you')
 print(d)
