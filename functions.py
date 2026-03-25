@@ -9,9 +9,9 @@ def calculate_sum(n: float) -> float:
 
     return n * (n + 1) / 2
 
-
 f = calculate_sum(10)
 print(f)
+
 
 def count_words(line: str) -> int:
     if not isinstance(line, str):  raise TypeError('Функция работает только со строками')
@@ -25,6 +25,18 @@ def count_words(line: str) -> int:
 
     return len(clean_words)
 
-
 d = count_words('hello world, im a human and i destroy you')
 print(d)
+
+
+def is_number(string: str) -> bool:
+    if not isinstance(string, str):
+        return False
+    try:
+        int(string.strip())
+        return True
+    except ValueError:
+        return False
+
+f = '123 321'
+print(is_number(f))
