@@ -1,159 +1,182 @@
 import pytest
-from classes import unique, is_number, count_words, calculate_sum
 
-
-def test_unique_empty():
-    assert unique([]) == [], "Должен возвращать пустой список"
-
-
-def test_unique_no_duplicates():
-    assert unique([1, "a", 2.5]) == [1, "a", 2.5], "Не должен изменять список без дублей"
-
-
-def test_unique_integers():
-    assert unique([1, 2, 2, 3, 3, 3]) == [1, 2, 3], "Должен оставлять только уникальные int"
-
-
-def test_unique_strings():
-    assert unique(["apple", "apple", "banana"]) == ["apple", "banana"], "Должен удалять дубликаты строк"
-
-
-def test_unique_floats():
-    assert unique([1.1, 1.1, 2.2]) == [1.1, 2.2], "Должен корректно работать с float"
-
-
-def test_unique_mixed_types():
-    # Учитываем, что в Python 1 == 1.0
-    assert unique([1, 1.0, "1"]) == [1, "1"], "Должен учитывать равенство 1 и 1.0"
-
-
-def test_unique_order():
-    assert unique(["b", "a", "b", "c", "a"]) == ["b", "a", "c"], "Порядок должен соответствовать первому появлению"
-
-
-def test_unique_long_list():
-    long_list = [1, 2, 3] * 100
-    assert unique(long_list) == [1, 2, 3], "Должен эффективно обрабатывать длинные списки"
-
-
-def test_unique_type_error():
-    with pytest.raises(TypeError):
-        unique("not a list")
-
-
-def test_is_number():
-    assert is_number('1') == True, 'Должен вернуть True - [1] является целым числом'
-
-
-def test_is_number_str():
-    assert is_number('w') == False, 'Должен вернуть False - [w] не является числом'
-
-
-def test_is_number_with_space():
-    assert is_number(' 1 ') == True, ('Должен вернуть True - [1] является числом пробелы справа и слева не должны'
-                                      'учитываться если там только пробелы')
-
-
-def test_is_number_with_space_middle():
-    assert is_number('1 1') == False, ('Должен вернуть False - [1 1] это два целых числа наша функция проверяет'
-                                       'является ли строка одним целым числом')
-
-
-def test_is_number_float():
-    assert is_number('1.2') == False, 'Должен вернуть False - [1.2] не является целым числом'
-
-
-def test_is_number_void():
-    assert is_number('') == False, 'Должен вернуть False - пустая строка не целое число'
-
-
-def test_is_number_bool():
-    assert is_number('True') == False, ('Должен вернуть False - хоть [True] и является целым числом [1] но это другой тип'
-                                        'данных')
-
-
-def test_is_number_list():
-    assert is_number([1,2,3]) == False, 'функция не должна работать со списком'
-
-
-def test_count_words_empty_string():
-    assert count_words('') == 0, 'Должен вернуть 0 для пустой строки'
-
-
-def test_count_words_whitespace_only():
-    assert count_words('         ') == 0, 'Должен вернуть 0, если в строке только пробелы'
-
-
-def test_count_words_multiple_spaces():
-    assert count_words('a   b   c') == 3, 'Должен корректно считать слова с лишними пробелами между ними'
-
-def test_count_words_with_punctuation():
-    assert count_words('a, b, c.') == 3, 'Знаки препинания не должны считаться отдельными словами'
-
-
-def test_count_words_with_numbers():
-    assert count_words('1, 2, 3, no!') == 1, 'Числа не должны учитываться как слова, только буквенные последовательности'
-
-
-def test_count_words_hyphenated_terms():
-    assert count_words('a - b - c') == 3, 'Одиночные дефисы не должны считаться словами'
-
-
-def test_count_words_single_letters():
-    assert count_words('a') == 1, 'Одиночная буква является словом'
-
-
-def test_count_words_single_symbol():
-    assert count_words('*') == 0, 'Одиночный спецсимвол не является словом'
-
-
-def test_count_words_invalid_type_raises_error():
-    with pytest.raises(TypeError) as error_info:
-        count_words(1)
-
-    print(f"\nТекст ошибки: {error_info.value}")
-
-    assert 'Функция работает только со строками' in str(error_info.value)
-
-
-def test_sum_positive_integer():
-    assert calculate_sum(3) == 6, 'Для n=3 сумма (1+2+3) должна быть 6'
-
-
-def test_sum_float_input():
-    assert calculate_sum(3.4) == 7.48, 'Должен корректно обрабатывать float'
-
-
-def test_sum_numeric_string():
-    assert calculate_sum('2') == 3, 'Должен уметь преобразовывать число-строку в число'
-
-
-def test_sum_boundary_minimum():
-    assert calculate_sum(1) == 1, 'Минимальное значение n=1 должно возвращать 1'
-
-
-def test_sum_large_number():
-    assert calculate_sum(10**10) == 5.0000000005e+19, 'Должен справляться с большими числами'
-
-
-def test_error_zero():
+from datetime import datetime
+from classes import LibraryBook, Temperature
+
+@pytest.fixture
+def temp_zero():
+    """Фикстура для нулевой температуры"""
+    return Temperature(0)
+
+@pytest.fixture
+def temp_hot():
+    """Фикстура для высокой температуры"""
+    return Temperature(100)
+
+@pytest.fixture
+def temp_below_zero():
+    """Фикстура для отрицательной температуры"""
+    return Temperature(-20)
+
+# 1. Проверка корректности инициализации и получения значения для нулевой температуры
+def test_init_and_get_value_zero(temp_zero):
+    assert temp_zero.get_value() == 0
+
+# 2. Проверка корректности инициализации и получения значения для высокой температуры
+def test_init_and_get_value_hot(temp_hot):
+    assert temp_hot.get_value() == 100
+
+# 3. Тест перевода 0°C в градусы Фаренгейта
+def test_to_fahrenheit_zero(temp_zero):
+    assert temp_zero.to_fahrenheit() == 32
+
+# 4. Тест перевода 100°C в градусы Фаренгейта
+def test_to_fahrenheit_hot(temp_hot):
+    assert temp_hot.to_fahrenheit() == 212
+
+# 5. Тест перевода 0°C в Кельвины
+def test_to_kelvin_zero(temp_zero):
+    assert temp_zero.to_kelvin() == 273
+
+# 6. Тест перевода 100°C в Кельвины
+def test_to_kelvin_hot(temp_hot):
+    assert temp_hot.to_kelvin() == 373
+
+# 7. Проверка, что положительная температура определяется верно
+def test_is_positive_true(temp_hot):
+    assert temp_hot.is_positive() == True
+
+# 8. Проверка, что отрицательная температура не считается положительной
+def test_is_positive_false(temp_below_zero):
+    assert temp_below_zero.is_positive() == False
+
+# 9. Сравнение двух температур, где первая больше второй
+def test_compare_t1_bigger(temp_hot, temp_below_zero):
+    t1 = temp_hot
+    t2 = temp_below_zero
+    assert Temperature.compare(t1, t2) == -1
+
+# 10. Сравнение двух одинаковых температур
+def test_compare_equal(temp_hot):
+    t1 = temp_hot
+    t2 = temp_hot
+    assert Temperature.compare(t1, t2) == 0
+
+# 11. Сравнение двух температур, где первая меньше второй
+def test_compare_t1_smaller(temp_below_zero, temp_hot):
+    t1 = temp_below_zero
+    t2 = temp_hot
+    assert Temperature.compare(t1, t2) == 1
+
+# 12. Проверка генерации ошибки при попытке создать температуру ниже абсолютного нуля
+def test_below_absolute_zero():
     with pytest.raises(ValueError):
-        calculate_sum(0)
+        Temperature(-2000)
+
+# 13. Проверка генерации ошибки при попытке создать температуру выше планковской температуры
+def test_above_plank_temp():
+    with pytest.raises(ValueError):
+        Temperature(1.4168e320)
 
 
-def test_error_less_than_one():
-    with pytest.raises(ValueError) as error_info:
-        calculate_sum(-2)
 
-    print(f"\nТекст ошибки: {error_info.value}")
+@pytest.fixture
+def classic_book():
+    """Фикстура для старой книги (например, 1949 год)"""
+    return LibraryBook("1984", "George Orwell", 1949)
 
-    assert "n не должен быть меньше 1" in str(error_info.value)
+@pytest.fixture
+def modern_book():
+    """Фикстура для новой книги (вышла в текущем году)"""
+    current_year = datetime.now().year
+    return LibraryBook("Python Guide", "Dmitry Rak", current_year)
 
+@pytest.fixture
+def current_year():
+    """Фикстура для текущего года"""
+    current_year = datetime.now().year
+    return current_year
 
-def test_error_invalid_string():
-    with pytest.raises(ValueError) as error_info:
-        calculate_sum("привет")
+# 1. Проверка инициализации названия
+def test_title_init(classic_book):
+    assert classic_book.get_title() == "1984"
 
-    print(f"\nТекст ошибки: {error_info.value}")
+# 2. Проверка инициализации автора
+def test_author_init(classic_book):
+    assert classic_book.get_author() == "George Orwell"
 
-    assert "невозможно преобразовать n в число" in str(error_info.value)
+# 3. Проверка инициализации года
+def test_year_init(classic_book):
+    assert classic_book.get_publish_year() == 1949
+
+# 4. Проверка метода rename
+def test_rename_functionality(modern_book):
+    modern_book.rename("Python is cool")
+    assert modern_book.get_title() == "Python is cool"
+
+# 5. Проверка __str__: наличие названия
+def test_str_contains_title(classic_book):
+    assert "1984" in str(classic_book)
+
+# 6. Проверка __str__: наличие автора
+def test_str_contains_author(classic_book):
+    assert "George Orwell" in str(classic_book)
+
+# 7. Проверка __str__: корректный формат строк
+def test_str_format(modern_book):
+    output = str(modern_book)
+    assert "Название книги:" in output
+    assert "Автор:" in output
+    assert "Год выхода:" in output
+
+# 8. Проверка метода age для старой книги
+def test_age_calculation_old(classic_book):
+    expected_age = datetime.now().year - 1949
+    assert classic_book.age() == expected_age
+
+# 9. Проверка метода age для новой книги
+def test_age_calculation_new(modern_book):
+    assert modern_book.age() == 0
+
+# 10. Проверка is_old для классики (должно быть True, так как > 50 лет)
+def test_is_old_true(classic_book):
+    assert classic_book.is_old() is True
+
+# 11. Проверка is_old для новой книги (должно быть False)
+def test_is_old_false(modern_book):
+    assert modern_book.is_old() is False
+
+# 12. Проверка, что геттер возвращает именно число (int)
+def test_year_type(modern_book):
+    assert isinstance(modern_book.get_publish_year(), int)
+
+# 13. Работа rename после нескольких смен
+def test_multiple_renames(classic_book):
+    classic_book.rename("84")
+    classic_book.rename("Nineteen Eighty-Four")
+    assert classic_book.get_title() == "Nineteen Eighty-Four"
+
+# 14. Ошибка при пустом названии
+def test_init_empty_title():
+    with pytest.raises(ValueError, match="Название книги"):
+        LibraryBook("", "Author", 2000)
+
+# 15. Ошибка при пустом авторе
+def test_init_whitespace_author():
+    with pytest.raises(ValueError, match="Имя автора"):
+        LibraryBook("Title", "   ", 2000)
+
+# 16. Ошибка при годе издания в будущем
+def test_init_future_year(current_year):
+    with pytest.raises(ValueError, match="не может быть больше текущего"):
+        LibraryBook("Future", "Author", current_year + 1)
+
+# 17. Ошибка при попытке переименовать в пустую строку
+def test_rename_error(classic_book):
+    with pytest.raises(ValueError, match="не может быть пустым"):
+        classic_book.rename("  ")
+
+# 18. Ошибка в методе age, если передан год меньше года издания
+def test_age_error(classic_book):
+    with pytest.raises(ValueError, match="не может быть меньше года издания"):
+        classic_book.age(1900)
