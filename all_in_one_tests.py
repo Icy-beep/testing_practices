@@ -1,5 +1,5 @@
 import pytest
-from functions import unique, is_number, count_words, calculate_sum
+from classes import unique, is_number, count_words, calculate_sum
 
 
 def test_unique_empty():
